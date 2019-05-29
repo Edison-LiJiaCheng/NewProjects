@@ -2,14 +2,27 @@ package com.example.dome;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.TextView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
-public class MainActivity extends AppCompatActivity {
+import com.example.dome.adapter.MyRecAdapter;
+import com.example.dome.bean.Shu;
+import com.example.dome.contract.MainContract;
+import com.example.dome.presenter.MainPresenter;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity implements MainContract.MainView {
+    private static final String TAG = "MainActivity";
+    private RecyclerView mRecyclerView;
+    private MyRecAdapter myRecAdapter;
+    private MainPresenter mainPresenter;
 
     /**
      * Hello World!
      */
-    private TextView mTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,6 +32,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        mTextView = (TextView) findViewById(R.id.TextView);
+        mRecyclerView = (RecyclerView) findViewById(R.id.RecyclerView);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        myRecAdapter = new MyRecAdapter(this);
+        mRecyclerView.setAdapter(myRecAdapter);
+        mainPresenter = new MainPresenter(this);
+        mainPresenter.dataPresenter();
+    }
+
+    @Override
+    public void dataYesView(Shu shu) {
+        ArrayList<Shu.DataBean> data = (ArrayList<Shu.DataBean>) shu.getData();
+        myRecAdapter.setList(data);
+    }
+
+    @Override
+    public void dataNoView(String data) {
+        Log.e(TAG, "dataNoView: "+data );
     }
 }
